@@ -2,7 +2,7 @@
 
 A friendlier way to set preferences in Julia.
 
-Bulit on top of [Preferences.jl](https://github.com/JuliaPackaging/Preferences.jl), this
+Built on top of [Preferences.jl](https://github.com/JuliaPackaging/Preferences.jl), this
 package provides new commands in the Pkg REPL for getting and setting preferences:
 
 ```
