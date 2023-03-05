@@ -34,7 +34,7 @@ You may need to restart Julia for preferences to take effect.
 
 ## API
 
-See the docstrings for more details.
+See the docstrings for more details (e.g. `pkg> help prefs`).
 
 ### Commands
 - `prefs st [-g|--global] [pkg]`
