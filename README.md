@@ -46,11 +46,11 @@ See the docstrings for more details (e.g. `pkg> help prefs`).
 - `prefs rm [-g|--global] [-x|--export] [-a|--all] pkg key ...`
 
 ### Functions
-- `status(["pkg"]; _global=false)`
-- `add("pkg"; key=value, ..., _global=false, _export=false)`
-- `rm("pkg", "key", ...; _global=false, _export=false)`
-- `rm_all("pkg"; _global=false, _export=false)`
-- `get_all(["pkg"]; _global=false)`
+- `status(["pkg"])`
+- `add("pkg"; key=value, ...)` or `add("pkg", "key"=>value, ...)`
+- `rm("pkg", "key", ...)`
+- `rm_all("pkg")`
+- `get_all(["pkg"])`
 
 ### Flags
 - `-g`/`--global`/`_global=true` works in the global environment instead of the current
