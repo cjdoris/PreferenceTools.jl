@@ -78,4 +78,10 @@ end
     P.rm_all("__example__", _global=false)
     P.rm_all("__example2__", _global=true)
     P.rm_all("__example2__", _global=false)
+    for st in [status(), status("__example__"), status(; _global=true), status("__example__"; _global=true)]
+        @test occursin("No preferences", st)
+        @test !occursin("foo", st)
+        @test !occursin("bar", st)
+        @test !occursin("baz", st)
+    end
 end
