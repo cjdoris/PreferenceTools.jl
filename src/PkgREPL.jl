@@ -9,7 +9,7 @@ function _nice_error(f)
         f()
     catch err
         if err isa ErrorException
-            printstyled("ERROR: ", color=:light_red)
+            printstyled("ERROR: ", color=:red, bold=true)
             showerror(stdout, err)
             println()
         else
@@ -18,44 +18,30 @@ function _nice_error(f)
     end
 end
 
-function _with_env(f; glbl=false)
-    glbl || return f()
-    envs = filter(endswith("Project.toml"), Base.load_path())
-    isempty(envs) && error("no global environment")
-    cur_proj = Pkg.project().path
-    try
-        Pkg.activate(last(envs); io=devnull)
-        f()
-    finally
-        Pkg.activate(cur_proj; io=devnull)
-    end
-end
-
 ### options
 
 const all_opt = Pkg.REPLMode.OptionDeclaration([
     :name => "all",
     :short_name => "a",
-    :api => :all => true,
+    :api => :_all => true,
 ])
 
 const global_opt = Pkg.REPLMode.OptionDeclaration([
     :name => "global",
     :short_name => "g",
-    :api => :glbl => true,
+    :api => :_global => true,
+])
+
+const export_opt = Pkg.REPLMode.OptionDeclaration([
+    :name => "export",
+    :short_name => "x",
+    :api => :_export => true,
 ])
 
 ### status
 
-function status(args...; glbl=false)
-    _with_env(glbl=glbl) do
-        PreferencesTools.status(args...)
-        println()
-    end
-end
-function status(name)
-    PreferencesTools.status(name)
-    println()
+function status(args...; _global=false)
+    PreferencesTools.status(args...; _global)
 end
 
 const status_help = Markdown.md"""
@@ -81,43 +67,41 @@ const status_spec = Pkg.REPLMode.CommandSpec(
 
 ### add
 
-function add(args; glbl=false)
+function add(pkg, args...; _global=false, _export=false)
     _nice_error() do
-        _with_env(glbl=glbl) do
-            pkg, args... = args
-            prefs = map(args) do x
-                '=' in x || error("preferences must be of the form key=value")
-                key, value = split(x, '=', limit=2)
-                if value == "nothing"
-                    value = nothing
-                elseif value == ""
-                    value = missing
-                elseif value == "true"
-                    value = true
-                elseif value == "false"
-                    value = false
-                elseif (v = tryparse(Int, value)) !== nothing
-                    value = v
-                elseif (v = tryparse(Float64, value)) !== nothing
-                    value = v
-                end
-                Symbol(key) => value
+        prefs = map(args) do x
+            '=' in x || error("preferences must be of the form key=value")
+            key, value = split(x, '=', limit=2)
+            if value == "nothing"
+                value = nothing
+            elseif value == ""
+                value = missing
+            elseif value == "true"
+                value = true
+            elseif value == "false"
+                value = false
+            elseif (v = tryparse(Int, value)) !== nothing
+                value = v
+            elseif (v = tryparse(Float64, value)) !== nothing
+                value = v
             end
-            PreferencesTools.set!(pkg; prefs...)
-            status(pkg)
+            String(key) => value
         end
+        PreferencesTools.add(pkg, prefs...; _global, _export, _interactive=true)
     end
 end
 
 const add_help = Markdown.md"""
 ```
-prefs add [-g|--global] pkg key=value ...
+prefs add [-g|--global] [-x|--export] pkg key=value ...
 ```
 
 Set preferences for a given package.
 
 The `-g` flag sets the preferences in the global environment (the last environment in the
 load path).
+
+The `-x` flag exports the preferences to Project.toml.
 """
 
 const add_spec = Pkg.REPLMode.CommandSpec(
@@ -126,30 +110,24 @@ const add_spec = Pkg.REPLMode.CommandSpec(
     help = add_help,
     description = "set preferences",
     arg_count = 1 => Inf,
-    should_splat = false,
-    option_spec = [global_opt],
+    option_spec = [global_opt, export_opt],
 )
 
 ### rm
 
-function rm(args; all=false, glbl=false)
+function rm(pkg, keys...; _all=false, _global=false, _export=false)
     _nice_error() do
-        _with_env(glbl=glbl) do
-            pkg, keys... = args
-            if all
-                error("not implemented")
-            end
-            if !isempty(keys)
-                PreferencesTools.delete!(pkg, keys...)
-            end
-            status(pkg)
+        if _all
+            PreferencesTools.rm_all(pkg; _global, _export, _interactive=true)
+        elseif !isempty(keys)
+            PreferencesTools.rm(pkg, keys...; _global, _export, _interactive=true)
         end
     end
 end
 
 const rm_help = Markdown.md"""
 ```
-prefs rm|remove [-g|--global] [-a|--all] pkg key ...
+prefs rm|remove [-g|--global] [-x|--export] [-a|--all] pkg [key ...]
 ```
 
 Unset preferences for a given package.
@@ -158,6 +136,8 @@ The `-a` flag removes all preferences.
 
 The `-g` flag removes preferences from the global environment (the last environment in the
 load path).
+
+The `-x` flag exports the preferences to Project.toml.
 """
 
 const rm_spec = Pkg.REPLMode.CommandSpec(
@@ -167,8 +147,7 @@ const rm_spec = Pkg.REPLMode.CommandSpec(
     help = rm_help,
     description = "unset preferences",
     arg_count = 1 => Inf,
-    should_splat = false,
-    option_spec = [all_opt, global_opt],
+    option_spec = [all_opt, global_opt, export_opt],
 )
 
 ### all specs

@@ -3,96 +3,118 @@ module PreferencesTools
 import Pkg
 import Preferences
 
-function _get_uuid(m::Module)
-    Preferences.get_uuid(m)
-end
-
-function _get_uuid(p::Base.PkgId)
-    p.uuid
-end
-
-function _get_uuid(u::Base.UUID)
-    u
-end
-
-function _get_uuid(n::String)
-    proj = Pkg.project()
-    if proj.name == n
-        return proj.uuid
+function _in_global_env(f)
+    proj = Pkg.project().path
+    try
+        Pkg.activate(; io=devnull)
+        f()
+    finally
+        Pkg.activate(proj; io=devnull)
     end
-    if haskey(proj.dependencies, n)
-        return proj.dependencies[n]
-    end
-    for (uuid, dep) in Pkg.dependencies()
-        if dep.name == n
-            return uuid
+end
+
+function _project_file(; _global)
+    ans = if _global
+        _in_global_env() do 
+            Pkg.project().path
         end
+    else
+        Pkg.project().path
     end
-    error("cannot find a package called $n in the current environment")
+    endswith(ans, "Project.toml") || error("environment does not have a Project.toml: $ans")
+    ans
 end
 
-function set!(pkg; _force=true, _export=false, kw...)
-    uuid = _get_uuid(pkg)
-    prefs = [String(k) => v for (k, v) in kw]
-    Preferences.set_preferences!(uuid, prefs...; force=_force, export_prefs=_export)
+function _prefs_file(; _global, _export)
+    proj = _project_file(; _global)
+    if !_export
+        ans = joinpath(dirname(proj), "JuliaLocalPreferences.toml")
+        if !ispath(ans)
+            ans = joinpath(dirname(proj), "LocalPreferences.toml")
+        end
+    else
+        ans = proj
+    end
+    ans
+end
+
+function add(pkg::String, args::Pair{String}...; _global::Bool=false, _export::Bool=false, _io::IO=stdout, _interactive::Bool=false, kw...)
+    # find the project to modify
+    proj = _prefs_file(; _global, _export)
+    # get the preferences
+    prefs = collect(Pair{String,Any}, args)
+    for (key, value) in kw
+        skey = String(key)
+        startswith(skey, "_") && error("invalid keyword argument: $key")
+        push!(prefs, eltype(prefs)(skey, value))
+    end
+    # set the preferences
+    printstyled(_io, "Writing", color=:green, bold=true)
+    println(_io, " `", proj, "`")
+    Preferences.set_preferences!(proj, pkg, prefs...; force=true)
+    if _interactive
+        status(pkg; _io)
+    end
+    printstyled(_io, "You may need to restart Julia for preferences to take effect.", color=:yellow)
+    println(_io)
     nothing
 end
 
-function delete!(pkg, names::Union{String,Symbol}...; _force=true, _export=false, kw...)
-    uuid = _get_uuid(pkg)
-    names = map(String, names)
-    Preferences.delete_preferences!(uuid, names...; force=_force, export_prefs=_export)
-    nothing
+function rm(pkg::String, args::String...; kw...)
+    add(pkg, map(x->x=>missing, args)...; kw...)
 end
 
-function get(pkg, name::Union{Symbol,String}, default=nothing)
-    uuid = _get_uuid(pkg)
-    name = String(name)
-    Preferences.load_preference(uuid, name, default)
+function rm_all(pkg::String; kw...)
+    rm(pkg, keys(get_all(pkg))...; kw...)
 end
 
-function get_all(pkg)
-    uuid = _get_uuid(pkg)
-    Preferences.drop_clears(Base.get_preferences(uuid))
+function get_all(; _global::Bool=false)
+    prefs = if _global
+        _in_global_env() do 
+            Base.get_preferences()
+        end
+    else
+        Base.get_preferences()
+    end
+    Preferences.drop_clears(prefs)
 end
 
-function get_all()
-    Preferences.drop_clears(Base.get_preferences())
+function get_all(pkg::String; kw...)
+    Base.get(Dict{String,Any}, get_all(; kw...), pkg)
 end
 
 function _status(io::IO, name, prefs)
     printstyled(io, name, bold=true)
-    any = false
+    println(io)
     for (key, value) in prefs
-        any = true
-        println(io)
         print(io, "  ", key, ": ")
         show(io, value)
-    end
-    if !any
         println(io)
+    end
+    if isempty(prefs)
         printstyled(io, "  No preferences.", color=:light_black)
+        println(io)
     end
     nothing
 end
 
-function status(name; io=stdout)
-    prefs = get_all(name)
-    _status(io, name, prefs)
+function status(name::String; _io::IO=stdout, _global::Bool=false)
+    prefs = get_all(name; _global)
+    _status(_io, name, prefs)
 end
 
-function status(; io=stdout)
-    prefs = get_all()
+function status(; _io::IO=stdout, _global::Bool=false)
+    prefs = get_all(; _global)
     any = false
     for (name, prefs) in prefs
         if !isempty(prefs)
-            any && println(io)
             any = true
-            _status(io, name, prefs)
+            _status(_io, name, prefs)
         end
     end
     if !any
-        printstyled(io, "No preferences.", color=:light_black)
+        printstyled(_io, "No preferences.", color=:light_black)
+        println(_io)
     end
 end
 
