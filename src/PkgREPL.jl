@@ -51,8 +51,7 @@ prefs st|status [-g|--global] [pkg]
 
 Show all the preferences, optionally for a particular package.
 
-The `-g` flag shows preferences in the global environment (the last environment in the
-loadpath).
+The `-g` flag shows preferences in the global environment.
 """
 
 const status_spec = Pkg.REPLMode.CommandSpec(
@@ -104,8 +103,7 @@ The `value` can be one of:
 - a boolean, integer or float liters (e.g. `x=true`, `x=12`, `x=3.4`)
 - anything else is a string (e.g. `x=/some/path`)
 
-The `-g` flag sets the preferences in the global environment (the last environment in the
-load path).
+The `-g` flag sets the preferences in the global environment.
 
 The `-x` flag exports the preferences to Project.toml.
 """
@@ -140,8 +138,7 @@ Unset preferences for a given package.
 
 The `-a` flag removes all preferences.
 
-The `-g` flag removes preferences from the global environment (the last environment in the
-load path).
+The `-g` flag removes preferences from the global environment.
 
 The `-x` flag exports the preferences to Project.toml.
 """
