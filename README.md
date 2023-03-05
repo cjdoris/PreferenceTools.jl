@@ -20,13 +20,13 @@ PythonCall
   exe: "python"
 
 pkg> prefs add Plots default_backend=gr
-Writing `C:\Users\chris\.julia\environments\plots\LocalPreferences.toml`
+Writing `.../example/LocalPreferences.toml`
 Plots
   default_backend: "gr"
 You may need to restart Julia for preferences to take effect.
 
 pkg> prefs rm --all PythonCall
-Writing `C:\Users\chris\.julia\environments\plots\LocalPreferences.toml`
+Writing `.../example/LocalPreferences.toml`
 PythonCall
   No preferences.
 You may need to restart Julia for preferences to take effect.
