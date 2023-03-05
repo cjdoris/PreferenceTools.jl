@@ -5,6 +5,9 @@ A friendlier way to set preferences in Julia.
 Built on top of [Preferences.jl](https://github.com/JuliaPackaging/Preferences.jl), this
 package provides new commands in the Pkg REPL for getting and setting preferences.
 
+In the following example, we find that Plots and PythonCall both have some preferences set
+already and modify them.
+
 ```
 julia> using PreferencesTools
 
@@ -22,9 +25,9 @@ Plots
   default_backend: "gr"
 You may need to restart Julia for preferences to take effect.
 
-pkg> prefs rm Plots default_backend
+pkg> prefs rm --all PythonCall
 Writing `C:\Users\chris\.julia\environments\plots\LocalPreferences.toml`
-Plots
+PythonCall
   No preferences.
 You may need to restart Julia for preferences to take effect.
 ```
