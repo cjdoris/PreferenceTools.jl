@@ -16,7 +16,7 @@ end
     @test basename(file) in ["LocalPreferences.toml", "JuliaLocalPreferences.toml"]
     @test dirname(file) == dirname(P._project_file(_global=false))
     # if JuliaLocalPreferences.toml does not exist, then the file should be LocalPreferences.toml
-    rm(file)
+    rm(file, force=true)
     file2 = P._prefs_file(_export=false, _global=false)
     @test dirname(file2) == dirname(file)
     @test basename(file2) == "LocalPreferences.toml"
