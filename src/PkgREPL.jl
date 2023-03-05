@@ -4,20 +4,6 @@ import ..PreferencesTools
 import Pkg
 import Markdown
 
-function _nice_error(f)
-    try
-        f()
-    catch err
-        if err isa ErrorException
-            printstyled("ERROR: ", color=:red, bold=true)
-            showerror(stdout, err)
-            println()
-        else
-            rethrow()
-        end
-    end
-end
-
 ### options
 
 const all_opt = Pkg.REPLMode.OptionDeclaration([
@@ -67,27 +53,25 @@ const status_spec = Pkg.REPLMode.CommandSpec(
 ### add
 
 function add(pkg, args...; _global=false, _export=false)
-    _nice_error() do
-        prefs = map(args) do x
-            '=' in x || error("preferences must be of the form key=value")
-            key, value = split(x, '=', limit=2)
-            if value == "nothing"
-                value = nothing
-            elseif value == ""
-                value = missing
-            elseif value == "true"
-                value = true
-            elseif value == "false"
-                value = false
-            elseif (v = tryparse(Int, value)) !== nothing
-                value = v
-            elseif (v = tryparse(Float64, value)) !== nothing
-                value = v
-            end
-            String(key) => value
+    prefs = map(args) do x
+        '=' in x || Pkg.Types.pkgerror("preferences must be of the form key=value")
+        key, value = split(x, '=', limit=2)
+        if value == "nothing"
+            value = nothing
+        elseif value == ""
+            value = missing
+        elseif value == "true"
+            value = true
+        elseif value == "false"
+            value = false
+        elseif (v = tryparse(Int, value)) !== nothing
+            value = v
+        elseif (v = tryparse(Float64, value)) !== nothing
+            value = v
         end
-        PreferencesTools.add(pkg, prefs...; _global, _export, _interactive=true)
+        String(key) => value
     end
+    PreferencesTools.add(pkg, prefs...; _global, _export, _interactive=true)
 end
 
 const add_help = Markdown.md"""
@@ -120,12 +104,10 @@ const add_spec = Pkg.REPLMode.CommandSpec(
 ### rm
 
 function rm(pkg, keys...; _all=false, _global=false, _export=false)
-    _nice_error() do
-        if _all
-            PreferencesTools.rm_all(pkg; _global, _export, _interactive=true)
-        elseif !isempty(keys)
-            PreferencesTools.rm(pkg, keys...; _global, _export, _interactive=true)
-        end
+    if _all
+        PreferencesTools.rm_all(pkg; _global, _export, _interactive=true)
+    elseif !isempty(keys)
+        PreferencesTools.rm(pkg, keys...; _global, _export, _interactive=true)
     end
 end
 
