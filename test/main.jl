@@ -21,6 +21,9 @@ end
     @test occursin(P._prefs_file(_global=false, _export=false), str)
     @test occursin("You may need to restart Julia", str)
     @test P.get_all("__example__")["foo"] === 11
+    @test_throws Exception P.add("__example__"; _foo=99)
+    @test P.get_all("__example__")["foo"] === 11
+    @test get(P.get_all("__example__"), "_foo", nothing) === nothing
     P.add("__example__"; foo=10, _global=true, _io=devnull)
     @test P.get_all("__example__")["foo"] === 10
     @test P.get_all("__example__"; _global=true)["foo"] === 10

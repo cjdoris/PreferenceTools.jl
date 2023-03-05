@@ -42,3 +42,8 @@ end
     @test get(ps, "r", nothing) === nothing
     @test get(ps, "s", nothing) === nothing
 end
+
+@testitem "bad" begin
+    using Pkg
+    @test_throws Exception pkg"prefs add __example__ foo"
+end
