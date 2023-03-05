@@ -3,9 +3,13 @@
 A friendlier way to set preferences in Julia.
 
 Built on top of [Preferences.jl](https://github.com/JuliaPackaging/Preferences.jl), this
-package provides new commands in the Pkg REPL for getting and setting preferences:
+package provides new commands in the Pkg REPL for getting and setting preferences.
 
 ```
+julia> using PreferencesTools
+
+julia> # press ] to enter the Pkg REPL
+
 pkg> prefs st
 Plots
   default_backend: "unicodeplots"
