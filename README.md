@@ -7,11 +7,20 @@ package provides new commands in the Pkg REPL for getting and setting preference
 
 ```
 pkg> prefs st
-...
+Plots
+  default_backend: "unicodeplots"
+PythonCall
+  exe: "python"
 
-pkg> prefs add SomePackage foo=true bar=/some/path
-...
+pkg> prefs add Plots default_backend=gr
+Writing `C:\Users\chris\.julia\environments\plots\LocalPreferences.toml`
+Plots
+  default_backend: "gr"
+You may need to restart Julia for preferences to take effect.
 
-pkg> prefs rm SomePackage foo bar
-...
+pkg> prefs rm Plots default_backend
+Writing `C:\Users\chris\.julia\environments\plots\LocalPreferences.toml`
+Plots
+  No preferences.
+You may need to restart Julia for preferences to take effect.
 ```
