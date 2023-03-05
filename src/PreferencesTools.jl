@@ -29,7 +29,7 @@ function _prefs_file(; _global, _export)
     proj = _project_file(; _global)
     if !_export
         ans = joinpath(dirname(proj), "JuliaLocalPreferences.toml")
-        if !ispath(ans)
+        if !isfile(ans)
             ans = joinpath(dirname(proj), "LocalPreferences.toml")
         end
     else
