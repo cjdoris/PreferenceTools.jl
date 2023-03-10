@@ -86,7 +86,7 @@ end
 function _status(io::IO, name, prefs)
     printstyled(io, name, bold=true)
     println(io)
-    for (key, value) in prefs
+    for (key, value) in sort(collect(prefs), by=first)
         print(io, "  ", key, ": ")
         show(io, value)
         println(io)
@@ -106,7 +106,7 @@ end
 function status(; _io::IO=stdout, _global::Bool=false)
     prefs = get_all(; _global)
     any = false
-    for (name, prefs) in prefs
+    for (name, prefs) in sort(collect(prefs), by=first)
         if !isempty(prefs)
             any = true
             _status(_io, name, prefs)
