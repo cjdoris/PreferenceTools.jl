@@ -1,6 +1,6 @@
 module PkgREPL
 
-import ..PreferencesTools
+import ..PreferenceTools
 import Pkg
 import Markdown
 
@@ -27,7 +27,7 @@ const export_opt = Pkg.REPLMode.OptionDeclaration([
 ### status
 
 function status(args...; _global=false)
-    PreferencesTools.status(args...; _global)
+    PreferenceTools.status(args...; _global)
 end
 
 const status_help = Markdown.md"""
@@ -71,7 +71,7 @@ function add(pkg, args...; _global=false, _export=false)
         end
         String(key) => value
     end
-    PreferencesTools.add(pkg, prefs...; _global, _export, _interactive=true)
+    PreferenceTools.add(pkg, prefs...; _global, _export, _interactive=true)
 end
 
 const add_help = Markdown.md"""
@@ -105,9 +105,9 @@ const add_spec = Pkg.REPLMode.CommandSpec(
 
 function rm(pkg, keys...; _all=false, _global=false, _export=false)
     if _all
-        PreferencesTools.rm_all(pkg; _global, _export, _interactive=true)
+        PreferenceTools.rm_all(pkg; _global, _export, _interactive=true)
     elseif !isempty(keys)
-        PreferencesTools.rm(pkg, keys...; _global, _export, _interactive=true)
+        PreferenceTools.rm(pkg, keys...; _global, _export, _interactive=true)
     end
 end
 

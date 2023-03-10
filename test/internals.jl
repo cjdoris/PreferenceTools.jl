@@ -1,5 +1,5 @@
 @testitem "_project_file" begin
-    P = PreferencesTools
+    P = PreferenceTools
     projs = filter(p->endswith(p, "Project.toml"), Base.load_path())
     proj = P._project_file(_global=false)
     @test endswith(proj, "Project.toml")
@@ -10,7 +10,7 @@
 end
 
 @testitem "_prefs_file" begin
-    P = PreferencesTools
+    P = PreferenceTools
     # basic test
     file = P._prefs_file(_export=false, _global=false)
     @test basename(file) in ["LocalPreferences.toml", "JuliaLocalPreferences.toml"]

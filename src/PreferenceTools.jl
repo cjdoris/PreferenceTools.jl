@@ -1,4 +1,4 @@
-module PreferencesTools
+module PreferenceTools
 
 import Pkg
 import Preferences
@@ -120,4 +120,4 @@ end
 
 include("PkgREPL.jl")
 
-end # module PreferencesTools
+end # module PreferenceTools

@@ -1,13 +1,13 @@
 @testitem "status" begin
     using Pkg
-    P = PreferencesTools
+    P = PreferenceTools
     pkg"prefs st"
     pkg"prefs status"
 end
 
 @testitem "add/rm" begin
     using Pkg
-    P = PreferencesTools
+    P = PreferenceTools
     pkg"prefs add __example__ t=true f=false i=12 r=3.4 n=nothing s=/some/path"
     ps = P.get_all()["__example__"]
     @test ps["t"] === true

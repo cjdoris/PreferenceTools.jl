@@ -1,4 +1,4 @@
-name = "PreferencesTools"
+name = "PreferenceTools"
 uuid = "ba661fbb-e901-4445-b070-854aec6bfbc5"
 authors = ["Christopher Doris <github.com/cjdoris>"]
 version = "0.1.0"

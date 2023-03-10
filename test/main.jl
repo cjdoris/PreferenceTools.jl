@@ -1,5 +1,5 @@
 @testitem "get_all" begin
-    P = PreferencesTools
+    P = PreferenceTools
     pss = P.get_all()
     @test pss isa Dict{String,Any}
     @test all(ps->ps isa Dict{String,Any}, values(pss))
@@ -13,7 +13,7 @@
 end
 
 @testitem "add/rm" begin
-    P = PreferencesTools
+    P = PreferenceTools
     io = IOBuffer()
     P.add("__example__"; foo=11, _io=io)
     str = String(take!(io))
@@ -36,7 +36,7 @@ end
 end
 
 @testitem "rm_all" begin
-    P = PreferencesTools
+    P = PreferenceTools
     P.add("__example__"; foo=11, bar=true, _global=true, _io=devnull)
     P.add("__example__"; foo=10, bar=false, _io=devnull)
     @test P.get_all("__example__")["foo"] === 10
@@ -52,7 +52,7 @@ end
 end
 
 @testitem "status" begin
-    P = PreferencesTools
+    P = PreferenceTools
     status = (args...; kw...) -> sprint(io -> P.status(args...; _io=io, kw...))
     P.add("__example__"; foo=11, bar=true, baz="hello", _global=true)
     for st in [status(; _global=true), status("__example__"; _global=true)]

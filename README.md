@@ -1,8 +1,8 @@
-# PreferencesTools.jl
+# PreferenceTools.jl
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Test Status](https://github.com/cjdoris/PreferencesTools.jl/actions/workflows/tests.yml/badge.svg)](https://github.com/cjdoris/PreferencesTools.jl/actions/workflows/tests.yml)
-[![Codecov](https://codecov.io/gh/cjdoris/PreferencesTools.jl/branch/main/graph/badge.svg?token=1flP5128hZ)](https://codecov.io/gh/cjdoris/PreferencesTools.jl)
+[![Test Status](https://github.com/cjdoris/PreferenceTools.jl/actions/workflows/tests.yml/badge.svg)](https://github.com/cjdoris/PreferenceTools.jl/actions/workflows/tests.yml)
+[![Codecov](https://codecov.io/gh/cjdoris/PreferenceTools.jl/branch/main/graph/badge.svg?token=1flP5128hZ)](https://codecov.io/gh/cjdoris/PreferenceTools.jl)
 
 A friendlier way to set preferences in Julia.
 
@@ -13,7 +13,7 @@ In the following example, we find that Plots and PythonCall both have some prefe
 already and modify them.
 
 ```
-julia> using PreferencesTools
+julia> using PreferenceTools
 
 julia> # press ] to enter the Pkg REPL
 
