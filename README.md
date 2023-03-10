@@ -2,6 +2,7 @@
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Test Status](https://github.com/cjdoris/PreferenceTools.jl/actions/workflows/tests.yml/badge.svg)](https://github.com/cjdoris/PreferenceTools.jl/actions/workflows/tests.yml)
+[![Test Status (nightly)](https://github.com/cjdoris/PreferenceTools.jl/actions/workflows/tests-nightly.yml/badge.svg)](https://github.com/cjdoris/PreferenceTools.jl/actions/workflows/tests-nightly.yml)
 [![Codecov](https://codecov.io/gh/cjdoris/PreferenceTools.jl/branch/main/graph/badge.svg?token=1flP5128hZ)](https://codecov.io/gh/cjdoris/PreferenceTools.jl)
 
 A friendlier way to set preferences in Julia.
