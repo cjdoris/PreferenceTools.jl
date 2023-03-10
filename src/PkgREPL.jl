@@ -32,7 +32,7 @@ end
 
 const status_help = Markdown.md"""
 ```
-prefs st|status [-g|--global] [pkg]
+preference st|status [-g|--global] [pkg]
 ```
 
 Show all the preferences, optionally for a particular package.
@@ -53,7 +53,7 @@ const status_spec = Pkg.REPLMode.CommandSpec(
 ### add
 
 function add(pkg, args...; _global=false, _export=false)
-    prefs = map(args) do x
+    preference = map(args) do x
         '=' in x || Pkg.Types.pkgerror("preferences must be of the form key=value")
         key, value = split(x, '=', limit=2)
         if value == "nothing"
@@ -71,12 +71,12 @@ function add(pkg, args...; _global=false, _export=false)
         end
         String(key) => value
     end
-    PreferenceTools.add(pkg, prefs...; _global, _export, _interactive=true)
+    PreferenceTools.add(pkg, preference...; _global, _export, _interactive=true)
 end
 
 const add_help = Markdown.md"""
 ```
-prefs add [-g|--global] [-x|--export] pkg key=value ...
+preference add [-g|--global] [-x|--export] pkg key=value ...
 ```
 
 Set preferences for a given package.
@@ -113,7 +113,7 @@ end
 
 const rm_help = Markdown.md"""
 ```
-prefs rm|remove [-g|--global] [-x|--export] [-a|--all] pkg [key ...]
+preference rm|remove [-g|--global] [-x|--export] [-a|--all] pkg [key ...]
 ```
 
 Unset preferences for a given package.
@@ -147,7 +147,7 @@ const SPECS = Dict(
 
 function __init__()
     # add the commands to the REPL
-    Pkg.REPLMode.SPECS["prefs"] = SPECS
+    Pkg.REPLMode.SPECS["preference"] = SPECS
     # update the help with the new commands
     copy!(Pkg.REPLMode.help.content, Pkg.REPLMode.gen_help().content)
 end

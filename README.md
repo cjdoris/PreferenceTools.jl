@@ -17,19 +17,19 @@ julia> using PreferenceTools
 
 julia> # press ] to enter the Pkg REPL
 
-pkg> prefs st
+pkg> preference st
 Plots
   default_backend: "unicodeplots"
 PythonCall
   exe: "python"
 
-pkg> prefs add Plots default_backend=gr
+pkg> preference add Plots default_backend=gr
 Writing `.../example/LocalPreferences.toml`
 Plots
   default_backend: "gr"
 You may need to restart Julia for preferences to take effect.
 
-pkg> prefs rm --all PythonCall
+pkg> preference rm --all PythonCall
 Writing `.../example/LocalPreferences.toml`
 PythonCall
   No preferences.
@@ -38,12 +38,12 @@ You may need to restart Julia for preferences to take effect.
 
 ## API
 
-See the docstrings for more details (e.g. `pkg> help prefs`).
+See the docstrings for more details (e.g. `pkg> help preference`).
 
 ### Commands
-- `prefs st [-g|--global] [pkg]`
-- `prefs add [-g|--global] [-x|--export] pkg key=value ...`
-- `prefs rm [-g|--global] [-x|--export] [-a|--all] pkg key ...`
+- `preference st [-g|--global] [pkg]`
+- `preference add [-g|--global] [-x|--export] pkg key=value ...`
+- `preference rm [-g|--global] [-x|--export] [-a|--all] pkg key ...`
 
 ### Functions
 - `status(["pkg"])`
