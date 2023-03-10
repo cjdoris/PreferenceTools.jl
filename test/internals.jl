@@ -37,3 +37,20 @@ end
     file = P._prefs_file(_export=true, _global=true)
     @test file == P._project_file(_global=true)
 end
+
+@testitem "_parse_value" begin
+    p = PreferenceTools.PkgREPL._parse_value
+    @test p("nothing") === nothing
+    @test p("true") === true
+    @test p("false") === false
+    @test p("0") === 0
+    @test p("1") === 1
+    @test p("-12") === -12
+    @test p("1.2") === 1.2
+    @test p("-3.4") === -3.4
+    @test p("/some/path") === "/some/path"
+    @test p("1,2,3") == [1, 2, 3]
+    @test p("true,nothing,false,12,3.4,foo") == [true, nothing, false, 12, 3.4, "foo"]
+    @test p("12,") == [12]
+    @test p(",") == []
+end

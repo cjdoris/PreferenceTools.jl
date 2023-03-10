@@ -52,22 +52,33 @@ const status_spec = Pkg.REPLMode.CommandSpec(
 
 ### add
 
+function _parse_value(str)
+    str = String(strip(str))
+    if ',' in str
+        return Any[_parse_value(x) for x in split(str, ',') if !isempty(strip(x))]
+    elseif str == "nothing"
+        return nothing
+    elseif str == "true"
+        return true
+    elseif str == "false"
+        return false
+    elseif (v = tryparse(Int, str)) !== nothing
+        return v
+    elseif (v = tryparse(Float64, str)) !== nothing
+        return v
+    else
+        return str
+    end
+end
+
 function add(pkg, args...; _global=false, _export=false)
     preference = map(args) do x
         '=' in x || Pkg.Types.pkgerror("preferences must be of the form key=value")
         key, value = split(x, '=', limit=2)
-        if value == "nothing"
-            value = nothing
-        elseif value == ""
+        if value == ""
             value = missing
-        elseif value == "true"
-            value = true
-        elseif value == "false"
-            value = false
-        elseif (v = tryparse(Int, value)) !== nothing
-            value = v
-        elseif (v = tryparse(Float64, value)) !== nothing
-            value = v
+        else
+            value = _parse_value(value)
         end
         String(key) => value
     end
@@ -85,6 +96,7 @@ The `value` can be one of:
 - blank to set the preference back to its default (e.g. `x=`)
 - `nothing` to force it back to its default, over-riding any global preferences (e.g. `x=nothing`)
 - a boolean, integer or float literal (e.g. `x=true`, `x=12`, `x=3.4`)
+- a comma-separated list of values (e.g. `x=foo,bar`; `x=foo,` for a singleton; `x=,` for an empty list)
 - anything else is a string (e.g. `x=/some/path`)
 
 The `-g` flag sets the preferences in the global environment.
