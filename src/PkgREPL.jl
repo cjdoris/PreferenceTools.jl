@@ -24,6 +24,12 @@ const export_opt = Pkg.REPLMode.OptionDeclaration([
     :api => :_export => true,
 ])
 
+const string_opt = Pkg.REPLMode.OptionDeclaration([
+    :name => "string",
+    :short_name => "s",
+    :api => :_string => true,
+])
+
 ### status
 
 function status(args...; _global=false)
@@ -71,14 +77,16 @@ function _parse_value(str)
     end
 end
 
-function add(pkg, args...; _global=false, _export=false)
+function add(pkg, args...; _global=false, _export=false, _string=false)
     preference = map(args) do x
         '=' in x || Pkg.Types.pkgerror("preferences must be of the form key=value")
         key, value = split(x, '=', limit=2)
-        if value == ""
-            value = missing
-        else
-            value = _parse_value(value)
+        if !_string
+            if value == ""
+                value = missing
+            else
+                value = _parse_value(value)
+            end
         end
         String(key) => value
     end
@@ -87,7 +95,7 @@ end
 
 const add_help = Markdown.md"""
 ```
-preference add [-g|--global] [-x|--export] pkg key=value ...
+preference add [-g|--global] [-x|--export] [-s|--string] pkg key=value ...
 ```
 
 Set preferences for a given package.
@@ -98,6 +106,8 @@ The `value` can be one of:
 - a boolean, integer or float literal (e.g. `x=true`, `x=12`, `x=3.4`)
 - a comma-separated list of values (e.g. `x=foo,bar`; `x=foo,` for a singleton; `x=,` for an empty list)
 - anything else is a string (e.g. `x=/some/path`)
+
+The `-s` flag treats all values as strings.
 
 The `-g` flag sets the preferences in the global environment.
 
@@ -110,7 +120,7 @@ const add_spec = Pkg.REPLMode.CommandSpec(
     help = add_help,
     description = "set preferences",
     arg_count = 1 => Inf,
-    option_spec = [global_opt, export_opt],
+    option_spec = [global_opt, export_opt, string_opt],
 )
 
 ### rm

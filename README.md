@@ -59,3 +59,5 @@ See the docstrings for more details (e.g. `pkg> help preference`).
 - `-x`/`--export`/`_export=true` writes preferences to `Project.toml` instead of
   `LocalPreferences.toml`. Use this to set default preferences to be shared with others
   (e.g. defaults for your own package).
+- `-s`/`--string` forces the values given to `preference add` to be interpreted as strings,
+  instead of parsing them.

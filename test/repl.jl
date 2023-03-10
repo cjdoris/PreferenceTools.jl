@@ -16,6 +16,14 @@ end
     @test ps["r"] === 3.4
     @test get(ps, "n", nothing) === nothing
     @test ps["s"] == "/some/path"
+    pkg"preference add -s __example__ t=true f=false"
+    ps = P.get_all()["__example__"]
+    @test ps["t"] === "true"
+    @test ps["f"] === "false"
+    @test ps["i"] === 12
+    @test ps["r"] === 3.4
+    @test get(ps, "n", nothing) === nothing
+    @test ps["s"] == "/some/path"
     pkg"preference add __example__ t= f="
     ps = P.get_all()["__example__"]
     @test get(ps, "t", nothing) === nothing
