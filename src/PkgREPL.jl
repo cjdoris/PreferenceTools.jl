@@ -77,10 +77,25 @@ function _parse_value(str)
     end
 end
 
+function _check_pkg(pkg)
+    if '=' in pkg
+        Pkg.Types.pkgerror("invalid package name: $pkg")
+    end
+end
+
+function _check_key(key)
+    if '=' in key
+        Pkg.Types.pkgerror("invalid preference name: $key")
+    end
+end
+
 function add(pkg, args...; _global=false, _export=false, _string=false)
+    _check_pkg(pkg)
+    oldprefs = PreferenceTools.get_all(pkg; _global)
     preference = map(args) do x
         '=' in x || Pkg.Types.pkgerror("preferences must be of the form key=value")
         key, value = split(x, '=', limit=2)
+        _check_key(key)
         if !_string
             if value == ""
                 value = missing
@@ -88,6 +103,23 @@ function add(pkg, args...; _global=false, _export=false, _string=false)
                 value = _parse_value(value)
             end
         end
+        if endswith(key, "+") || endswith(key, "-")
+            op = key[end]
+            key = key[1:prevind(key,end)]
+            oldvalue = get(oldprefs, key, [])
+            oldvalue isa AbstractVector || Pkg.Types.pkgerror("existing value for `$key` is not a list")
+            if !isa(value, AbstractVector)
+                value = [value]
+            end
+            if op == '+'
+                value = vcat(oldvalue, value)
+            elseif op == '-'
+                value = filter(∉(value), oldvalue)
+            else
+                @assert false
+            end
+        end
+        oldprefs[key] = value
         String(key) => value
     end
     PreferenceTools.add(pkg, preference...; _global, _export, _interactive=true)
@@ -106,6 +138,10 @@ The `value` can be one of:
 - a boolean, integer or float literal (e.g. `x=true`, `x=12`, `x=3.4`)
 - a comma-separated list of values (e.g. `x=foo,bar`; `x=foo,` for a singleton; `x=,` for an empty list)
 - anything else is a string (e.g. `x=/some/path`)
+
+You can also modify existing values:
+- `key+=value` appends the given value (or values) to the list at `key`
+- `key-=value` removes the given value (or values) from the list at `key`
 
 The `-s` flag treats all values as strings.
 
@@ -126,6 +162,8 @@ const add_spec = Pkg.REPLMode.CommandSpec(
 ### rm
 
 function rm(pkg, keys...; _all=false, _global=false, _export=false)
+    _check_pkg(pkg)
+    foreach(_check_key, keys)
     if _all
         PreferenceTools.rm_all(pkg; _global, _export, _interactive=true)
     elseif !isempty(keys)

@@ -51,7 +51,24 @@ end
     @test get(ps, "s", nothing) === nothing
 end
 
+@testitem "list" begin
+    using Pkg
+    P = PreferenceTools
+    pkg"preference add __example__ x=a,b"
+    ps = P.get_all()["__example__"]
+    @test ps["x"] == ["a", "b"]
+    pkg"preference add __example__ x+=c,d x-=a,c x+=a,b"
+    ps = P.get_all()["__example__"]
+    @test ps["x"] == ["b", "d", "a", "b"]
+    pkg"preference add __example__ x+=e x-=b"
+    ps = P.get_all()["__example__"]
+    @test ps["x"] == ["d", "a", "e"]
+end
+
 @testitem "bad" begin
     using Pkg
     @test_throws Exception pkg"preference add __example__ foo"
+    @test_throws Exception pkg"preference add __example__=12 x=99"
+    @test_throws Exception pkg"preference rm __example__=12"
+    @test_throws Exception pkg"preference rm __example__ x=12"
 end
