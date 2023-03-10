@@ -113,10 +113,9 @@ function add(pkg, args...; _global=false, _export=false, _string=false)
             end
             if op == '+'
                 value = vcat(oldvalue, value)
-            elseif op == '-'
-                value = filter(∉(value), oldvalue)
             else
-                @assert false
+                @assert op == '-'
+                value = filter(∉(value), oldvalue)
             end
         end
         oldprefs[key] = value
