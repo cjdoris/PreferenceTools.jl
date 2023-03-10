@@ -84,7 +84,7 @@ Set preferences for a given package.
 The `value` can be one of:
 - blank to set the preference back to its default (e.g. `x=`)
 - `nothing` to force it back to its default, over-riding any global preferences (e.g. `x=nothing`)
-- a boolean, integer or float liters (e.g. `x=true`, `x=12`, `x=3.4`)
+- a boolean, integer or float literal (e.g. `x=true`, `x=12`, `x=3.4`)
 - anything else is a string (e.g. `x=/some/path`)
 
 The `-g` flag sets the preferences in the global environment.
