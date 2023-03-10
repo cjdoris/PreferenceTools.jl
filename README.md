@@ -17,7 +17,7 @@ julia> using PreferenceTools
 
 julia> # press ] to enter the Pkg REPL
 
-pkg> preference st
+pkg> preference status
 Plots
   default_backend: "unicodeplots"
 PythonCall
@@ -41,9 +41,9 @@ You may need to restart Julia for preferences to take effect.
 See the docstrings for more details (e.g. `pkg> help preference`).
 
 ### Commands
-- `preference st [-g|--global] [pkg]`
-- `preference add [-g|--global] [-x|--export] pkg key=value ...`
-- `preference rm [-g|--global] [-x|--export] [-a|--all] pkg key ...`
+- `preference st|status [pkg]`
+- `preference add pkg key=value ...`
+- `preference rm|remove [-a|--all] pkg key ...`
 
 ### Functions
 - `status(["pkg"])`
