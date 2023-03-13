@@ -1,7 +1,7 @@
 name = "PreferenceTools"
 uuid = "ba661fbb-e901-4445-b070-854aec6bfbc5"
 authors = ["Christopher Doris <github.com/cjdoris>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
