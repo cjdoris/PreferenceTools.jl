@@ -37,6 +37,11 @@ PythonCall
 You may need to restart Julia for preferences to take effect.
 ```
 
+This package is mainly intended for interactive use. Packages (or any other code
+programatically accessing preferences) should normally use
+[Preferences.jl](https://github.com/JuliaPackaging/Preferences.jl)
+directly.
+
 ## API
 
 See the docstrings for more details (e.g. `pkg> help preference`).
