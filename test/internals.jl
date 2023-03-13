@@ -58,15 +58,15 @@ end
 @testitem "completions" begin
     P = PreferenceTools
     using Pkg
-    pkg"preference add __example__ foo=1 bar=2"
-    cs = P.PkgREPL.complete_packages_and_prefs(Dict(), "")
+    pkg"preference add -g __example__ foo=1 bar=2"
+    cs = P.PkgREPL.complete_packages_and_prefs(Dict(:_global=>true), "")
     @test "__example__" in cs
     @test "foo" in cs
     @test "bar" in cs
-    cs = P.PkgREPL.complete_packages_and_prefs(Dict(), "__ex")
+    cs = P.PkgREPL.complete_packages_and_prefs(Dict(:_global=>true), "__ex")
     @test "__example__" in cs
     @test "foo" ∉ cs
     @test "bar" ∉ cs
-    cs = P.PkgREPL.complete_packages_and_prefs(Dict(), "foo=")
+    cs = P.PkgREPL.complete_packages_and_prefs(Dict(:_global=>true), "foo=")
     @test isempty(cs)
 end
