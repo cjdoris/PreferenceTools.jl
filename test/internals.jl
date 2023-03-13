@@ -54,3 +54,19 @@ end
     @test p("12,") == [12]
     @test p(",") == []
 end
+
+@testitem "completions" begin
+    P = PreferenceTools
+    using Pkg
+    pkg"preference add __example__ foo=1 bar=2"
+    cs = P.PkgREPL.complete_packages_and_prefs(Dict(), "")
+    @test "__example__" in cs
+    @test "foo" in cs
+    @test "bar" in cs
+    cs = P.PkgREPL.complete_packages_and_prefs(Dict(), "__ex")
+    @test "__example__" in cs
+    @test "foo" ∉ cs
+    @test "bar" ∉ cs
+    cs = P.PkgREPL.complete_packages_and_prefs(Dict(), "foo=")
+    @test isempty(cs)
+end

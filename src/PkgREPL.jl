@@ -30,6 +30,52 @@ const string_opt = Pkg.REPLMode.OptionDeclaration([
     :api => :_string => true,
 ])
 
+function complete_packages(options, partial)
+    _global = get(options, :_global, false)
+    ans = String[]
+    cur_proj = Pkg.project().path
+    try
+        if _global
+            Pkg.activate(io=devnull)
+        end
+        for proj in Base.load_path()
+            Pkg.activate(proj, io=devnull)
+            for (dep, _) in Pkg.project().dependencies
+                if startswith(dep, partial)
+                    push!(ans, dep)
+                end
+            end
+        end
+    finally
+        Pkg.activate(cur_proj, io=devnull)
+    end
+    for (pkg, _) in PreferenceTools.get_all(; _global)
+        if startswith(pkg, partial)
+            push!(ans, pkg)
+        end
+    end
+    sort!(unique!(ans))
+end
+
+function complete_prefs(options, partial)
+    _global = get(options, :global, false)
+    ans = String[]
+    if '=' ∉ partial
+        for (_, prefs) in PreferenceTools.get_all(; _global)
+            for (pref, _) in prefs
+                if startswith(pref, partial)
+                    push!(ans, pref)
+                end
+            end
+        end
+    end
+    sort!(unique!(ans))
+end
+
+function complete_packages_and_prefs(options, partial)
+    sort!(unique!(vcat(complete_packages(options, partial), complete_prefs(options, partial))))
+end
+
 ### status
 
 function status(args...; _global=false)
@@ -54,6 +100,7 @@ const status_spec = Pkg.REPLMode.CommandSpec(
     description = "show all preferences",
     arg_count = 0 => 1,
     option_spec = [global_opt],
+    completions = complete_packages,
 )
 
 ### add
@@ -156,6 +203,7 @@ const add_spec = Pkg.REPLMode.CommandSpec(
     description = "set preferences",
     arg_count = 1 => Inf,
     option_spec = [global_opt, export_opt, string_opt],
+    completions = complete_packages_and_prefs,
 )
 
 ### rm
@@ -192,6 +240,7 @@ const rm_spec = Pkg.REPLMode.CommandSpec(
     description = "unset preferences",
     arg_count = 1 => Inf,
     option_spec = [all_opt, global_opt, export_opt],
+    completions = complete_packages_and_prefs,
 )
 
 ### all specs
