@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.2 (2023-03-13)
 - The REPL commands now support limited completion.
 
 ## 0.1.1 (2023-03-13)
