@@ -66,3 +66,99 @@ See the docstrings for more details (e.g. `pkg> help preference`).
   (e.g. defaults for your own package).
 - `-s`/`--string` forces the values given to `preference add` to be interpreted as strings,
   instead of parsing them.
+
+## More REPL examples
+
+You can set booleans, integers and floating point numbers.
+```
+pkg> preference add Example bool=true int=34 float=99.9
+Writing `.../example/LocalPreferences.toml`
+Example
+  bool: true
+  float: 99.9
+  int: 34
+You may need to restart Julia for preferences to take effect.
+```
+
+You can unset a preference by passing an empty value. This is equivalent to using the `rm`
+command.
+```
+pkg> preference add Example bool=
+Writing `.../example/LocalPreferences.toml`
+Example
+  float: 99.9
+  int: 34
+You may need to restart Julia for preferences to take effect.
+```
+
+Preferences can be set in your global environment (e.g. `~/.julia/environments/v1.8`) with
+the `-g` flag. Preferences are inherited up the load path, meaning that local preferences
+take precedence - see how the `float` preference does not change because it already has a
+local value.
+```
+pkg> preference add -g Example bool=false float=0.0
+Writing `.../example/LocalPreferences.toml`
+Example
+  bool: false
+  float: 99.9
+  int: 34
+You may need to restart Julia for preferences to take effect.
+```
+
+In this case, unsetting the `bool` preference in the local environment has no effect,
+because it has a default value from the global environment. To force the preference to be
+removed in the local environment, you can pass the `nothing` value (or remove it from the
+global environment).
+```
+pkg> preference add Example bool=
+Writing `.../example/LocalPreferences.toml`
+Example
+  bool: false
+  float: 99.9
+  int: 34
+You may need to restart Julia for preferences to take effect.
+
+pkg> preference add Example bool=nothing
+Writing `.../example/LocalPreferences.toml`
+Example
+  float: 99.9
+  int: 34
+You may need to restart Julia for preferences to take effect.
+```
+
+A value containing `,` is interpreted as a list. Blank entries are ignored, so `,` itself
+is an empty list and `foo,` is a list with one value.
+```
+pkg> preference add Example list=foo,bar,baz one=1, empty=,
+Writing `.../example/LocalPreferences.toml`
+Example
+  empty: Union{}[]
+  float: 99.9
+  int: 34
+  list: ["foo", "bar", "baz"]
+  one: [1]
+You may need to restart Julia for preferences to take effect.
+```
+
+You can append to a list with `+=` and remove items with `-=`.
+```
+pkg> preference add Example list+=hello
+Writing `.../example/LocalPreferences.toml`
+Example
+  empty: Union{}[]
+  float: 99.9
+  int: 34
+  list: ["foo", "bar", "baz", "hello"]
+  one: [1]
+You may need to restart Julia for preferences to take effect.
+
+pkg> preference add Example list-=bar,baz
+Writing `.../example/LocalPreferences.toml`
+Example
+  empty: Union{}[]
+  float: 99.9
+  int: 34
+  list: ["foo", "hello"]
+  one: [1]
+You may need to restart Julia for preferences to take effect.
+```
