@@ -84,6 +84,9 @@ It's not used for anything right now other than to inform design.
   - `color :: Dict`
 - `Gtk4`
   - `uv_loop_integration :: String` (`auto`, `enabled` or `disabled`)
+- `HDF5`
+  - `libhdf5 :: String`
+  - `libhdf5_hl :: String`
 - `JLLPrefixes`
   - `clone_dir :: String`
 - `JuMP`
