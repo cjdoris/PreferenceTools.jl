@@ -162,3 +162,17 @@ Example
   one: [1]
 You may need to restart Julia for preferences to take effect.
 ```
+
+### Manually Loading Preferences with `PreferenceTools.get_all`
+Some packages may not yet support Preferences.jl. As a convenience, `get_all` can be used
+to easily load preferences manually. Providing a `Dict{Symbol, Any}` type argument to
+`get_all` will provide a splat-able preferences dictionary (ie one with `Symbol` instead
+of String values). Setting `allow_symbols` will also convert symbol values stored as strings
+(e.g. ":sym") to `Symbol`s (:sym).
+
+For example, for loading preferences for PlotThemes and Plots:
+```julia
+julia> import PreferenceTools: get_all
+julia> Plots.theme(get_all(Dict{Symbol, Any}, "PlotThemes"; allow_symbols=true)[:theme])
+julia> Plots.default(;get_all(Dict{Symbol, Any}, "Plots"; allow_symbols=true)...)
+```
