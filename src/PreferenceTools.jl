@@ -83,6 +83,28 @@ function get_all(pkg::String; kw...)
     Base.get(Dict{String,Any}, get_all(; kw...), pkg)
 end
 
+"""
+Return a dict with:
+* string keys in `d` converted to `Symbol` keys
+* if allow_symbols: string values starting with ':' casted to `Symbol` values, e.g. ":sym" -> :sym
+"""
+function str2sym(d::AbstractDict{<:AbstractString, <:Any}; allow_symbols=false)
+    dd = Dict{Symbol, Any}(Symbol(k) => v for (k, v) in d) 
+    if allow_symbols
+        for k in findall(v->v isa AbstractString && startswith(v, ':'), dd)
+            dd[k] = Symbol(dd[k][2:end])
+        end
+    end
+    dd
+end
+
+"""
+Useful for manually setting preferences when `pkg` does not support Preferences.jl yet.
+"""
+function get_all(::Type{Dict{Symbol,Any}}, pkg::AbstractString; allow_symbols=false, kw...)
+    str2sym(get_all(pkg; kw...); allow_symbols=allow_symbols)
+end
+
 function _status(io::IO, name, prefs)
     printstyled(io, name, bold=true)
     println(io)
